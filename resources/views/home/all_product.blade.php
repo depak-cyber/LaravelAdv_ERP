@@ -2,7 +2,6 @@
 <html>
    <head>
       <!-- Basic -->
-      
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
       <!-- Mobile Metas -->
@@ -12,40 +11,31 @@
       <meta name="description" content="" />
       <meta name="author" content="" />
       <link rel="shortcut icon" href="images/favicon.png" type="">
-      <title>Famms - Fashion Trends</title>
+      <title>Famms - Fashion HTML Template</title>
       <!-- bootstrap core css -->
-      <link rel="stylesheet" type="text/css" href="{{asset('home/css/bootstrap.css')}}" />
+      <link rel="stylesheet" type="text/css" href="home/css/bootstrap.css" />
       <!-- font awesome style -->
-      <link href="{{asset('home/css/font-awesome.min.css')}}" rel="stylesheet" />
+      <link href="css/font-awesome.min.css" rel="stylesheet" />
       <!-- Custom styles for this template -->
-      <link href="{{asset('home/css/style.css')}}" rel="stylesheet" />
+      <link href="home/css/style.css" rel="stylesheet" />
       <!-- responsive style -->
-      <link href="{{asset('home/css/responsive.css')}}" rel="stylesheet" />
+      <link href="home/css/responsive.css" rel="stylesheet" />
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
    </head>
    <body>
-      @include('sweetalert::alert')
     <div class="hero_area">
         <!-- header section strats -->
         @include('home.header')
         <!-- end header section -->
-        <!-- slider section -->
-        @include('home.slider')
-        <!-- end slider section -->
-     </div>
-     <!-- why section -->
-     @include('home.why')
-     <!-- end why section -->
+        
      
-     <!-- arrival section -->
-     @include('home.new_arrival')
-     <!-- end arrival section -->
+    
      
      <!-- product section -->
-     @include('home.product')
+     @include('home.product_view')
      <!-- end product section -->
-
+    </div>
 
      <!----  Comment section starts -->
 

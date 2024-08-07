@@ -2,7 +2,7 @@
 <html>
    <head>
       <!-- Basic -->
-      <base href="/public">
+      
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
       <!-- Mobile Metas -->
@@ -12,15 +12,15 @@
       <meta name="description" content="" />
       <meta name="author" content="" />
       <link rel="shortcut icon" href="images/favicon.png" type="">
-      <title>Famms - Fashion HTML Template</title>
+      <title>Famms - Fashion Trends</title>
       <!-- bootstrap core css -->
-      <link rel="stylesheet" type="text/css" href="home/css/bootstrap.css" />
+      <link rel="stylesheet" type="text/css" href="{{asset('home/css/bootstrap.css')}}" />
       <!-- font awesome style -->
-      <link href="css/font-awesome.min.css" rel="stylesheet" />
+      <link href="{{asset('home/css/font-awesome.min.css')}}" rel="stylesheet" />
       <!-- Custom styles for this template -->
-      <link href="home/css/style.css" rel="stylesheet" />
+      <link href="{{asset('home/css/style.css')}}" rel="stylesheet" />
       <!-- responsive style -->
-      <link href="home/css/responsive.css" rel="stylesheet" />
+      <link href="{{asset('home/css/responsive.css')}}" rel="stylesheet" />
    </head>
    <body>
     <div class="hero_area">
@@ -32,7 +32,7 @@
             <div class="box">
                
                <div class="img-box" style="padding:20px;">
-                  <img src="product/{{$item->image}}" alt="">
+                  <img src="/product/{{$item->image}}" alt="">
                </div>
                <div class="detail-box">
                   <h5>
@@ -62,15 +62,15 @@
        
      </div>
     
-     @include('home.footer')
-     <!-- footer end -->
+   
+    <!--   footer end 
       <div class="cpy_">
          <p class="mx-auto">© 2021 All Rights Reserved By <a href="https://html.design/">Free Html Templates</a><br>
          
             Distributed By <a href="https://themewagon.com/" target="_blank">ThemeWagon</a>
          
          </p>
-      </div>
+      </div>-->
       <!-- jQery -->
       <script src="home/js/jquery-3.4.1.min.js"></script>
       <!-- popper js -->

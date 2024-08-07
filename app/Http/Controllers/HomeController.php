@@ -6,12 +6,16 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
 
+use RealRashid\SweetAlert\Facades\Alert;
+
 use App\Models\User;
 
 use App\Models\Product;
 
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\Comment;
+use App\Models\Reply;
 
 use Session;
 use Stripe;
@@ -21,8 +25,10 @@ class HomeController extends Controller
 {
     public function index(){
         $product = product::paginate(3);
+        $comment = Comment::orderby('id','desc')->get();
+        $reply = Reply::all();
 
-        return view('home.userpage', compact('product'));
+        return view('home.userpage', compact('product', 'comment', 'reply'));
     }
 
     public function redirect(){
@@ -43,9 +49,11 @@ class HomeController extends Controller
             $total_processing = order::where('delivery_satus', '=', 'Processing')->get()->count();
             return view('admin.home', compact('total_products','total_orders','total_users', 'total_revenue', 'total_delivered', 'total_processing'));
         }else{
-            $product = product::paginate(3);
+            $product = Product::paginate(10);
+            $comment = Comment::orderby('id','desc')->get();
+            $reply = Reply::all();
 
-            return view('home.userpage', compact('product'));
+            return view('home.userpage', compact('product', 'comment', 'reply'));
         }
     }
 
@@ -57,7 +65,32 @@ class HomeController extends Controller
         if(Auth::id()){
            $user = Auth::user();
           // dd($user);
+          $userid = $user->id;
           $product = Product::find($id);
+
+          //add to cart, check where product_id and user_id match 
+          //then get cart id and fetch quantity and price
+          $product_exist_id = cart::where('product_id', '=', $id)->where('user_id', '=',$userid)->get('id')->first();
+           
+          if($product_exist_id){
+
+            $cart = cart::find($product_exist_id)->first();
+            $quantity = $cart->quantity;
+            $cart->quantity = $quantity + $request->quantity; 
+            
+            if ($product->discount_price !=null){
+                $cart->price= $product->discount_price * $cart->quantity;
+            }else{
+              $cart->price = $product->price * $cart->quantity;
+            }
+          
+            $cart->save();
+            //sweet alert
+            Alert::success('Product Added','Added Product To Cart');
+            return redirect()->back();
+            
+
+          }else{
 
           $cart = new Cart();
           $cart->name = $user->name;
@@ -80,7 +113,11 @@ class HomeController extends Controller
 
           $cart->quantity = $request->quantity;
           $cart->save();
+          Alert::success('Product Added','Added Product To Cart');
           return redirect()->back();
+
+          }
+          
 
         }else{
             return redirect('login');
@@ -201,4 +238,96 @@ class HomeController extends Controller
         return back();
     }
 
+    public function show_order() {
+        // If the auth ID exists
+        if (Auth::id()) {
+            $user = Auth::user();
+            $userid = $user->id;
+    
+            $orders = Order::where('user_id', '=', $userid)->get();
+        return view('home.order', compact('orders'));
+        } else {
+            return redirect('login');
+        }
+    }
+
+    public function cancel_order($id){
+        $order = order::find($id);
+        $order->delivery_satus= "Cancelled";
+        $order->save();
+
+        return redirect()->back();
+    }
+
+    public function add_comment(Request $request){
+        if(Auth::id()){
+            $comment = new comment;
+            $comment->name= Auth::user()->name;
+            $comment->user_id = Auth::user()->id;
+            $comment->comment= $request->comment;
+
+            $comment->save();
+
+            return redirect()->back();
+
+        }else{
+            return redirect('login');
+        }
+
+        
+    }
+
+    public function add_reply(Request $request){
+        if(Auth::id()){
+            $reply = new reply;
+
+            $reply->name = Auth::user()->name;
+            $reply->user_id = Auth::user()->id;
+            $reply->comment_id = $request->commentId;
+            $reply->reply = $request->reply;
+            $reply->save();
+
+            return redirect()->back();
+
+
+
+        }else{
+            return redirect('login');
+        }
+    }
+ 
+
+    public function product_search(Request $request){
+        //just added comment and reply becoz it see in userpage and get error
+        $comment = Comment::orderby('id','desc')->get();
+        $reply = Reply::all();
+
+        $search_text= $request->search;
+       // $product = Product::where('title','LIKE',"%$search_text%")->get();
+       $product = Product::where('title','LIKE',"%$search_text%")->orWhere('catagory', 'LIKE', "%$search_text%")->get();
+
+        return view('home.userpage', compact('product', 'comment','reply'));
+
+
+
+    }
+    public function products(){
+        $product = product::paginate(3);
+        $comment = Comment::orderby('id','desc')->get();
+        $reply = Reply::all();
+
+        return view('home.all_product', compact('product','comment', 'reply'));
+    }
+    public function search_product(Request $request){
+         //just added comment and reply becoz it see in userpage and get error
+         $comment = Comment::orderby('id','desc')->get();
+         $reply = Reply::all();
+ 
+         $search_text= $request->search;
+        // $product = Product::where('title','LIKE',"%$search_text%")->get();
+        $product = Product::where('title','LIKE',"%$search_text%")->orWhere('catagory', 'LIKE', "%$search_text%")->get();
+ 
+         return view('home.all_product', compact('product', 'comment','reply'));
+ 
+    }
 }

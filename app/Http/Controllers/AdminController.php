@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 use App\Models\Catagory;
 use App\Models\Product;
 use App\Models\Order;
@@ -13,23 +15,42 @@ use App\Notifications\MyFirstNotification;
 class AdminController extends Controller
 {
     public function view_catagory(){
-        $data=Catagory::all();
+        //if user login only
+        if(Auth::id()){
+
+            $data=Catagory::all();
         return view('admin.catagory', compact('data'));
+
+        }else{
+            return redirect('login');
+        }
+        
     }
 
     public function add_catagory(Request $request){
-        $data = new catagory;
+        if(Auth::id()){
+            $data = new catagory;
         $data->catagory_name = $request->catagory;
         $data->save();
 
         return redirect()->back()->with('message', 'Catagory added successfully');
+    }else {
+        return redirect('login');
+
     }
+        }
+       
 
     public function delete_catagory($id){
-        $data=catagory::find($id);
+        if(Auth::id()){
+            $data=catagory::find($id);
         $data->delete();
 
         return redirect()->back()->with('message', 'Deleted successfully');
+        }else{
+            return redirect('login');
+        }
+        
 
     }
 
@@ -42,24 +63,30 @@ class AdminController extends Controller
 
     public function add_product(Request $request)
     {
-         $product = new Product;
-
-         $product->title= $request->title;
-         $product->description= $request->description;
-         $product->price= $request->price;
-         $product->quantity= $request->quantity;
-         $product->discount_price= $request->dis_price;
-         $product->catagory= $request->catagory;
-
-         $image= $request->image;
-         $imagename= time().'.'.$image->getClientOriginalExtension();
-         $request->image->move('product', $imagename);
-         $product->image = $imagename;
-
+        if(Auth::id()){
+            $product=product::all();
         
-         $product->save();
-         
-         return redirect()->back()->with('message', 'Added product successfully');
+
+            $product->title= $request->title;
+            $product->description= $request->description;
+            $product->price= $request->price;
+            $product->quantity= $request->quantity;
+            $product->discount_price= $request->dis_price;
+            $product->catagory= $request->catagory;
+   
+            $image= $request->image;
+            $imagename= time().'.'.$image->getClientOriginalExtension();
+            $request->image->move('product', $imagename);
+            $product->image = $imagename;
+   
+           
+            $product->save();
+            
+            return redirect()->back()->with('message', 'Added product successfully');
+        }else{
+            redirect('login');
+        }
+        
     }
 
     public function show_product(){
@@ -81,25 +108,30 @@ class AdminController extends Controller
     }
 
     public function update_product_confirm( Request $request, $id){
-      $product= product::find($id);
+        if(Auth::id()){
+            $product= product::find($id);
 
-      $product->title=$request->title;
-      $product->description=$request->description;
-      $product->price=$request->price;
-      $product->quantity=$request->quantity;
-      $product->discount_price=$request->dis_price;
-      $product->catagory=$request->catagory;
+            $product->title=$request->title;
+            $product->description=$request->description;
+            $product->price=$request->price;
+            $product->quantity=$request->quantity;
+            $product->discount_price=$request->dis_price;
+            $product->catagory=$request->catagory;
+            
+            $image=$request->image;
+            if($image){
+              $imagename= time().'.'.$image->getClientOriginalExtension();
+              $request->image->move('product', $imagename);
+              $product->image=$imagename;
+            }
+            
+            $product->save();
       
-      $image=$request->image;
-      if($image){
-        $imagename= time().'.'.$image->getClientOriginalExtension();
-        $request->image->move('product', $imagename);
-        $product->image=$imagename;
-      }
+            return redirect()->back()->with('message', 'Product is updated successfully');
+        }else{
+            redirect('login');
+        }
       
-      $product->save();
-
-      return redirect()->back()->with('message', 'Product is updated successfully');
 
 
     }
